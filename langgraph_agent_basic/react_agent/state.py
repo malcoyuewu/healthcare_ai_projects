@@ -1,0 +1,14 @@
+from typing import Annotated, Sequence, TypedDict
+
+from langchain_core.messages import BaseMessage
+from langgraph.graph.message import add_messages
+
+
+class AgentState(TypedDict):
+    """The state of the agent.
+
+    For this simple ReAct agent we only track the conversation messages.
+    You can extend this with more fields (e.g. user profile, context, etc.).
+    """
+
+    messages: Annotated[Sequence[BaseMessage], add_messages]
