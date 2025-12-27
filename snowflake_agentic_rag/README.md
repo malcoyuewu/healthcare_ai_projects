@@ -16,6 +16,7 @@ This system is specifically designed for healthcare applications, featuring:
 ```bash
 # Clone and navigate to the project
 cd snowflake_agentic_rag
+Set up venv
 
 # Install dependencies
 pip install -r requirements.txt
