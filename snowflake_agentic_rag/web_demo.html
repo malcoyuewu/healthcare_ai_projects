@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Agentic RAG System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .query-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .query-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .response-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .response-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            min-height: 200px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .status-bar {
+            background: #e9ecef;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #dc3545;
+        }
+        
+        .status-dot.connected {
+            background: #28a745;
+        }
+        
+        .examples {
+            grid-column: 1 / -1;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            margin-top: 20px;
+        }
+        
+        .examples h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .example-queries {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .example-query {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 1px solid #dee2e6;
+        }
+        
+        .example-query:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .example-query strong {
+            color: #667eea;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Healthcare Agentic RAG</h1>
+            <p>AI-Powered Medical Knowledge Search & Analysis</p>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Checking connection...</span>
+            </div>
+            <div id="apiInfo">API: http://localhost:8000</div>
+        </div>
+        
+        <div class="main-content">
+            <div class="query-section">
+                <h3>🤖 Ask the AI Assistant</h3>
+                
+                <div class="form-group">
+                    <label for="agentType">Agent Type:</label>
+                    <select id="agentType">
+                        <option value="clinical">Clinical Research Assistant</option>
+                        <option value="data_analyst">Medical Data Analyst</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="queryInput">Your Medical Question:</label>
+                    <textarea id="queryInput" placeholder="Enter your medical question here..."></textarea>
+                </div>
+                
+                <button class="btn" onclick="submitQuery()" id="submitBtn">
+                    🔍 Search & Analyze
+                </button>
+            </div>
+            
+            <div class="response-section">
+                <h3>💬 AI Response</h3>
+                <div class="loading" id="loading">Processing your query...</div>
+                <div class="response-content" id="responseContent">
+Welcome to the Healthcare Agentic RAG System!
+
+This AI assistant can help you with:
+• Medical guidelines and research
+• Clinical data analysis
+• Treatment protocols
+• Healthcare statistics
+
+Select an agent type and enter your question to get started.
+                </div>
+            </div>
+            
+            <div class="examples">
+                <h3>💡 Example Queries</h3>
+                <div class="example-queries">
+                    <div class="example-query" onclick="setQuery('What are the current guidelines for diabetes screening in adults?', 'clinical')">
+                        <strong>Clinical Guidelines:</strong><br>
+                        "What are the current guidelines for diabetes screening in adults?"
+                    </div>
+                    
+                    <div class="example-query" onclick="setQuery('What is the average HbA1c level in our patient population?', 'data_analyst')">
+                        <strong>Data Analysis:</strong><br>
+                        "What is the average HbA1c level in our patient population?"
+                    </div>
+                    
+                    <div class="example-query" onclick="setQuery('What are the side effects of metformin?', 'clinical')">
+                        <strong>Drug Information:</strong><br>
+                        "What are the side effects of metformin?"
+                    </div>
+                    
+                    <div class="example-query" onclick="setQuery('Show me patient satisfaction trends over the past year', 'data_analyst')">
+                        <strong>Trend Analysis:</strong><br>
+                        "Show me patient satisfaction trends over the past year"
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        
+        // Check API health on load
+        window.onload = function() {
+            checkHealth();
+        };
+        
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                
+                const statusDot = document.getElementById('statusDot');
+                const statusText = document.getElementById('statusText');
+                
+                if (data.status === 'healthy') {
+                    statusDot.classList.add('connected');
+                    statusText.textContent = `Connected - ${data.available_llms} LLM(s) available`;
+                } else {
+                    statusText.textContent = `Status: ${data.status}`;
+                }
+            } catch (error) {
+                document.getElementById('statusText').textContent = 'API not available';
+            }
+        }
+        
+        function setQuery(query, agentType) {
+            document.getElementById('queryInput').value = query;
+            document.getElementById('agentType').value = agentType;
+        }
+        
+        async function submitQuery() {
+            const queryInput = document.getElementById('queryInput');
+            const agentType = document.getElementById('agentType');
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const responseContent = document.getElementById('responseContent');
+            
+            const query = queryInput.value.trim();
+            if (!query) {
+                alert('Please enter a question');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            responseContent.style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_BASE}/query`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        question: query,
+                        agent_type: agentType.value,
+                        include_sources: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    responseContent.textContent = `Agent: ${data.agent_used}\n\nResponse:\n${data.answer}`;
+                } else {
+                    responseContent.textContent = `Error: ${data.error_message || 'Unknown error occurred'}`;
+                }
+                
+            } catch (error) {
+                responseContent.textContent = `Connection Error: ${error.message}\n\nMake sure the API server is running:\npython run.py api`;
+            } finally {
+                // Hide loading state
+                loading.style.display = 'none';
+                responseContent.style.display = 'block';
+                submitBtn.disabled = false;
+            }
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('queryInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                submitQuery();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+# Snowflake Agentic RAG System Dependencies
+# Updated: December 2024
+
+# Web Framework and Server
+streamlit>=1.29.0
+fastapi>=0.104.1
+uvicorn[standard]>=0.24.0
+
+# Environment and Configuration
+python-dotenv>=1.0.0
+
+# LangChain and LangGraph for AI Orchestration
+langgraph>=0.2.16
+langchain-core>=0.3.15
+langchain>=0.3.7
+
+# HTTP Client and Template Engine
+requests>=2.31.0
+jinja2>=3.1.2
+
+# Snowflake Integration
+snowflake-snowpark-python>=1.18.0
+snowflake-ml-python>=1.5.1
+
+# Multi-Agent Framework
+pyautogen>=0.2.25
+
+# Additional Dependencies for Document Processing
+PyPDF2>=3.0.1
+python-docx>=1.1.0
+python-multipart>=0.0.6
+
+# Data Processing and Utilities
+pandas>=2.1.4
+numpy>=1.24.3
+pydantic>=2.5.0
+plotly>=5.17.0
+
+# Optional: For enhanced logging and monitoring
+structlog>=23.2.0
+
+python-dotenv>=0.13.0
+
+autogen>=0.10.3
+# 1. Check your Python Version
+# Run this in your terminal:
+
+ag2[openai]
+
+streamlit
+plotly
+google-genai
+vertexai
+# Bash
+
+# python --version
+# If it's 3.12 or higher: Snowpark is not yet compatible.
+
+# If it's 3.8 or lower: Snowpark has deprecated these versions.
+
+# 2. The Best Fix: Create a Compatible Virtual Environment
+# The cleanest way to bridge your local AutoGen system to Snowflake is to use Python 3.11. If you use conda or venv, you can set this up quickly.
+
+# Using Conda (Recommended):
+# Bash
+
+# # Create a dedicated environment for your RAG system
+# conda create --name snowflake_rag python=3.11 -y
+# conda activate snowflake_rag
+
+# # Now install the libraries
+# pip install snowflake-snowpark-python snowflake-ml-python pyautogen
+# Using venv (If you have Python 3.11 installed):
+# Bash
+
+# python3.11 -m venv snowflake_env
+# source snowflake_env/bin/activate  # On Windows: snowflake_env\Scripts\activate
+# pip install snowflake-snowpark-python snowflake-ml-python pyautogen
+# 3. Alternative: Check your Pip Version
+# Sometimes an outdated pip fails to see the compatible "wheels" (pre-compiled files) on PyPI.
+
+# Bash
+
+# python -m pip install --upgrade pip
+# 4. Special Case: Apple Silicon (M1/M2/M3)
+# If you are on a Mac and still see this error, ensure you are not running an emulated x86_64 version of Python. Snowflake Snowpark requires a native arm64 build or a consistent architecture across all libraries.
+
+# Why this matters for AutoGen
+# AutoGen often defaults to the latest Python features, but the Snowflake Connector is the "anchor" that dictates your version. By locking your environment to Python 3.11, you ensure that the connection to KNOWLEDGE_DB.DIABETES_CARE remains stable without library conflicts.
+
+# Once you have the environment activated and libraries installed, would you like me to provide a "Connection Test" script to verify that your local computer can successfully talk to your Cortex Search Service?
