@@ -24,18 +24,18 @@ class SnowflakeConnector:
         """Initialize Snowflake connection using environment variables"""
         try:
             # connection_parameters = {
-            #     "account": os.getenv("XT00505"),
-            #     "user": os.getenv("silversci"),
-            #     "password": os.getenv("DAHCenterprise@2026"),
+            #     "account": os.getenv("UPONRequest"),
+            #     "user": os.getenv("UPONRequest"),
+            #     "password": os.getenv("UPONRequest"),
             #     "role": os.getenv("SNOWFLAKE_ROLE", "SYSADMIN"),
             #     "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
             #     "database": os.getenv("SNOWFLAKE_DATABASE", "KNOWLEDGE_DB"),
             #     "schema": os.getenv("SNOWFLAKE_SCHEMA", "AI_SERVICES")
             # }
             connection_parameters = {
-                "account": "IHZVABV-XT00505",
-                "user": "silversci",
-                "password": "DAHCenterprise@2026",
+                "account": "UPONRequest",
+                "user": "UPONRequest",
+                "password": "UPONRequest",
                 "role": "SYSADMIN",
                 "warehouse": "COMPUTE_WH",
                 "database": "KNOWLEDGE_DB",
